@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.API_KEY || '';
+// Safe access to process.env to prevent ReferenceError in browsers
+const apiKey = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : '';
 const ai = new GoogleGenAI({ apiKey });
 
 export const getChemistryHelp = async (context: string, userQuery: string): Promise<string> => {
