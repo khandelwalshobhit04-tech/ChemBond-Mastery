@@ -23,7 +23,7 @@ interface Challenge {
   c2: number;
   en1: number;
   en2: number;
-  type: 'IONIC' | 'COVALENT' | 'COORDINATE' | 'BOTH';
+  type: 'IONIC' | 'COVALENT' | 'COORDINATE' | 'BOTH' | 'IONIC_COVALENT';
   hint: string;
   extras?: ExtraAtom[];
 }
@@ -44,8 +44,8 @@ const challenges: Challenge[] = [
     c2: 1, 
     en1: 3.04, 
     en2: 3.16, 
-    type: 'BOTH', 
-    hint: "Formed from NH3 and HCl. Features Ionic, Covalent, and Coordinate bonding.",
+    type: 'IONIC_COVALENT', 
+    hint: "Formed from NH3 and HCl. Features Ionic attraction between ions and Covalent bonding within the cation.",
     extras: [{ symbol: 'H', count: 1, side: 'right' }]
   },
   { id: 'SiO2', name: 'Silicon Dioxide', f1: 'Si', f2: 'O', v1: 4, v2: 6, c1: 1, c2: 2, en1: 1.90, en2: 3.44, type: 'COVALENT', hint: "Large electronegativity difference (1.54) but forms a covalent network solid." },
@@ -124,7 +124,7 @@ const Level2: React.FC<Level2Props> = ({ onComplete }) => {
     audioManager.playExplosion();
   };
 
-  const handleChoice = (choice: 'IONIC' | 'COVALENT' | 'COORDINATE' | 'BOTH') => {
+  const handleChoice = (choice: 'IONIC' | 'COVALENT' | 'COORDINATE' | 'BOTH' | 'IONIC_COVALENT') => {
     if (isExploding || showBondAnimation || isAnswered) return;
     stopTimer();
     setIsAnswered(true);
@@ -139,6 +139,9 @@ const Level2: React.FC<Level2Props> = ({ onComplete }) => {
         setFeedback("Correct! Identifying Coordinate interaction...");
         // Switch to Coordinate UI for visual reinforcement AFTER correct ID
         setTimeout(() => setShowCoordinateUI(true), 500); 
+      } else if (choice === 'IONIC_COVALENT') {
+        setShowBondAnimation('TRANSFER'); // Show transfer as dominant visual for NH4+ Cl-
+        setFeedback("Correct! Mixture of Ionic and Covalent bonding.");
       } else {
         setShowBondAnimation(choice === 'IONIC' ? 'TRANSFER' : 'SHARE');
         setFeedback("Correct! Bonding Successful.");
@@ -418,6 +421,14 @@ const Level2: React.FC<Level2Props> = ({ onComplete }) => {
                   className="py-4 bg-purple-500/10 border-2 border-purple-500 text-purple-400 rounded-xl font-bold hover:bg-purple-600 hover:text-white transition hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   BOTH (Cov + Coord)
+                </button>
+                {/* New Mixed Option */}
+                <button 
+                  onClick={() => handleChoice('IONIC_COVALENT')}
+                  disabled={isAnswered}
+                  className="col-span-2 py-4 bg-orange-500/10 border-2 border-orange-500 text-orange-400 rounded-xl font-bold hover:bg-orange-600 hover:text-white transition hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  IONIC + COVALENT
                 </button>
             </div>
             {!isAnswered && (
